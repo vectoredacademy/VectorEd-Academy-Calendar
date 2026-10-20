@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VectorEd Academy - Tutoring Schedule</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -23,9 +23,9 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0B192C; }
-        ::-webkit-scrollbar-thumb { background: #253A5E; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #253A5E; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #3b5278; }
         .today-col-header { background: rgba(245, 166, 35, 0.15) !important; border-bottom: 2px solid #F5A623 !important; }
         .line-clamp-2 {
@@ -34,44 +34,59 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        /* Mobile touch responsiveness fixes */
+        button, select, input, a {
+            touch-action: manipulation;
+        }
     </style>
 </head>
 <body class="bg-[#0B192C] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-    <header class="bg-[#0B192C] border-b border-slate-800/80 shadow-xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
-        <div class="flex items-center space-x-3">
-            <img src="https://iili.io/ndL8PQj.png" alt="VectorEd Academy Logo" class="w-10 h-10 object-cover rounded-xl border-2 border-amber-500 shadow-md" onerror="this.src='https://placehold.co/40x40/0B192C/FF6500?text=VE'">
-            <div>
-                <h1 class="text-xl font-black tracking-wider text-white flex items-center gap-2">
-                    Vector<span class="text-amber-500">Ed</span> <span class="text-slate-300 font-normal text-base">Academy</span>
-                </h1>
-                <p class="text-[11px] text-slate-400 tracking-wide font-medium">Interactive Tutoring & Class Schedule</p>
+    <header class="bg-[#0B192C] border-b border-slate-800/80 shadow-xl px-3 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 sticky top-0 z-30">
+        <div class="flex items-center justify-between w-full sm:w-auto space-x-3">
+            <div class="flex items-center space-x-2.5">
+                <img src="https://iili.io/ndL8PQj.png" alt="VectorEd Academy Logo" class="w-9 h-9 sm:w-10 sm:h-10 object-cover rounded-xl border-2 border-amber-500 shadow-md shrink-0" onerror="this.src='https://placehold.co/40x40/0B192C/FF6500?text=VE'">
+                <div>
+                    <h1 class="text-base sm:text-xl font-black tracking-wider text-white flex items-center gap-1.5">
+                        Vector<span class="text-amber-500">Ed</span> <span class="text-slate-300 font-normal text-xs sm:text-base">Academy</span>
+                    </h1>
+                    <p class="text-[10px] sm:text-[11px] text-slate-400 tracking-wide font-medium">Interactive Tutoring & Class Schedule</p>
+                </div>
+            </div>
+
+            <!-- Mobile Auth Toggle Button inside top brand bar -->
+            <div class="flex sm:hidden items-center">
+                <button id="authBtnMobile" onclick="handleAuthClick()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-lock"></i> <span id="authBtnTextMobile">Admin</span>
+                </button>
             </div>
         </div>
 
-        <div class="flex items-center flex-wrap gap-3">
+        <div class="flex items-center justify-between sm:justify-end flex-wrap gap-2 w-full sm:w-auto">
             <!-- Header Timezone Selector -->
-            <div class="flex items-center bg-slate-900/90 rounded-xl px-2.5 py-1 border border-slate-700/80 text-xs font-semibold">
-                <i class="fa-solid fa-globe text-amber-400 mr-2"></i>
-                <select id="headerTzSelect" onchange="handleTimezoneChange(this.value)" class="bg-transparent text-slate-200 outline-none cursor-pointer pr-1 max-w-[220px] sm:max-w-xs truncate">
-                    <!-- Populated instantly from localStorage -->
+            <div class="flex items-center bg-slate-900/90 rounded-xl px-2.5 py-1.5 border border-slate-700/80 text-xs font-semibold flex-1 sm:flex-initial">
+                <i class="fa-solid fa-globe text-amber-400 mr-2 shrink-0"></i>
+                <select id="headerTzSelect" onchange="handleTimezoneChange(this.value)" class="bg-transparent text-slate-200 outline-none cursor-pointer pr-1 w-full sm:w-auto max-w-[200px] sm:max-w-xs truncate">
+                    <!-- Populated instantly -->
                 </select>
             </div>
 
+            <!-- Week Navigator -->
             <div class="flex items-center bg-slate-900/90 rounded-xl p-1 border border-slate-700/80 shadow-inner">
-                <button onclick="changeWeek(-1)" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition text-xs font-semibold flex items-center gap-1">
-                    <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
+                <button onclick="changeWeek(-1)" class="px-2 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition text-xs font-semibold flex items-center gap-0.5">
+                    <i class="fa-solid fa-chevron-left text-[9px]"></i> Prev
                 </button>
-                <button onclick="jumpToCurrentWeek()" class="px-2.5 py-1 mx-1 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 text-xs font-bold border border-amber-500/30 transition">
+                <button onclick="jumpToCurrentWeek()" class="px-2 py-1 mx-0.5 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 text-xs font-bold border border-amber-500/30 transition">
                     Today
                 </button>
-                <span id="currentWeekDisplay" class="px-3 py-1 text-xs sm:text-sm font-bold text-amber-400 font-mono">Week View</span>
-                <button onclick="changeWeek(1)" class="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition text-xs font-semibold flex items-center gap-1">
-                    Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span id="currentWeekDisplay" class="px-2 py-1 text-[11px] sm:text-xs font-bold text-amber-400 font-mono">Week</span>
+                <button onclick="changeWeek(1)" class="px-2 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition text-xs font-semibold flex items-center gap-0.5">
+                    Next <i class="fa-solid fa-chevron-right text-[9px]"></i>
                 </button>
             </div>
 
-            <div class="flex items-center gap-2">
+            <!-- Desktop Admin Controls -->
+            <div class="hidden sm:flex items-center gap-2">
                 <button id="lecturerModalBtn" onclick="openLecturerModal()" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition items-center gap-1.5 shadow">
                     <i class="fa-solid fa-chalkboard-user text-amber-400"></i> Lecturers
                 </button>
@@ -88,43 +103,43 @@
         </div>
     </header>
 
-    <div class="bg-slate-900/90 border-b border-slate-800/80 px-4 sm:px-6 py-2.5 shadow-md sticky top-[61px] z-20 backdrop-blur-md">
-        <div class="max-w-[1800px] mx-auto flex items-center justify-between flex-wrap gap-3">
-            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="calendarTabsContainer">
+    <div class="bg-slate-900/90 border-b border-slate-800/80 px-3 sm:px-6 py-2 shadow-md sticky top-[108px] sm:top-[61px] z-20 backdrop-blur-md">
+        <div class="max-w-[1800px] mx-auto flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none" id="calendarTabsContainer">
                 <!-- Dynamically populated tabs -->
             </div>
-            <div class="text-[11px] text-amber-400 font-bold bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/20" id="activeCalendarTitleIndicator">
+            <div class="text-[10px] sm:text-[11px] text-amber-400 font-bold bg-amber-500/10 px-2.5 py-1 rounded-xl border border-amber-500/20 whitespace-nowrap" id="activeCalendarTitleIndicator">
                 Viewing: Main Calendar
             </div>
         </div>
     </div>
 
-    <main class="flex-1 p-3 sm:p-5 max-w-[1800px] w-full mx-auto flex flex-col">
+    <main class="flex-1 p-2 sm:p-5 max-w-[1800px] w-full mx-auto flex flex-col">
         
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 mb-4 shadow-md flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-6 flex-wrap">
-                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 mb-3 shadow-md flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-4 flex-wrap">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1">
                     <i class="fa-solid fa-circle-info text-amber-500"></i> Legend:
                 </span>
-                <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-3.5 rounded bg-[#E0F2FE] border border-sky-400 inline-block shadow-xs"></span>
-                    <span class="text-xs font-medium text-slate-300">Available Slot</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded bg-[#E0F2FE] border border-sky-400 inline-block"></span>
+                    <span class="text-[11px] font-medium text-slate-300">Available</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-3.5 rounded bg-[#FFE5D0] border border-orange-400 inline-block shadow-xs"></span>
-                    <span class="text-xs font-medium text-slate-300">Booked Class</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded bg-[#FFE5D0] border border-orange-400 inline-block"></span>
+                    <span class="text-[11px] font-medium text-slate-300">Booked Class</span>
                 </div>
             </div>
-            <div class="text-[11px] text-slate-400 italic" id="syncStatusIndicator">
+            <div class="text-[10px] sm:text-[11px] text-slate-400 italic" id="syncStatusIndicator">
                 * Cloud sync active (Google Sheets connected).
             </div>
         </div>
 
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl flex-1 overflow-hidden flex flex-col">
             <div class="overflow-x-auto flex-1">
-                <table class="w-full table-fixed border-collapse text-left min-w-[1100px]">
+                <table class="w-full table-fixed border-collapse text-left min-w-[960px] sm:min-w-[1100px]">
                     <colgroup>
-                        <col class="w-36">
+                        <col class="w-28 sm:w-36">
                         <col class="w-1/6">
                         <col class="w-1/6">
                         <col class="w-1/6">
@@ -141,71 +156,70 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-500 text-[11px] py-3 px-6 text-center border-t border-slate-800/80">
-        &copy; 2026 VectorEd Academy. All rights reserved. Cloud-Synced Interactive Schedule Platform.
+    <footer class="bg-slate-950 text-slate-500 text-[10px] sm:text-[11px] py-3 px-4 text-center border-t border-slate-800/80">
+        &copy; 2026 VectorEd Academy. All rights reserved. Mobile-Optimized Tutoring Platform.
     </footer>
 
     <!-- Admin Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <div class="text-center mb-6">
+            <div class="text-center mb-5">
                 <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl border border-amber-500/30">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white">Administrator Access</h3>
+                <h3 class="text-lg sm:text-xl font-bold text-white">Administrator Access</h3>
                 <p class="text-xs text-slate-400 mt-1">Enter admin password to enable management mode.</p>
             </div>
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Password</label>
-                    <input type="password" id="adminPasswordInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm" required>
+                    <input type="password" id="adminPasswordInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm" required>
                     <p id="loginErrorMsg" class="text-red-400 text-xs mt-1.5 hidden">Incorrect password. Please try again.</p>
                 </div>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-amber-900/30 text-sm">
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-amber-900/30 text-sm">
                     Authenticate
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Edit Slot Modal -->
-    <div id="slotModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+    <!-- View / Edit Slot Modal -->
+    <div id="slotModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <div class="mb-5">
-                <h3 id="slotModalTitle" class="text-xl font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-day text-amber-500"></i> Edit Time Slot
+            <div class="mb-4">
+                <h3 id="slotModalTitle" class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-day text-amber-500"></i> <span id="slotModalHeadingText">Time Slot Details</span>
                 </h3>
-                <p id="slotModalSubtitle" class="text-xs text-slate-400 mt-1">Configure class status, metadata, and lecturer assignments.</p>
+                <p id="slotModalSubtitle" class="text-xs text-slate-400 mt-1">View class status, metadata, and Zoom session links.</p>
             </div>
             
-            <form id="slotForm" onsubmit="handleSlotFormSubmit(event)" class="space-y-4">
+            <form id="slotForm" onsubmit="handleSlotFormSubmit(event)" class="space-y-3 sm:space-y-4">
                 <input type="hidden" id="slotDay">
                 <input type="hidden" id="slotTime">
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Status</label>
-                    <select id="slotStatus" onchange="toggleSlotFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+                    <select id="slotStatus" onchange="toggleSlotFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
                         <option value="available">Available Slot</option>
                         <option value="booked">Booked Class</option>
                     </select>
                 </div>
 
-                <div id="bookedFieldsContainer" class="space-y-4 border-t border-slate-800 pt-4">
+                <div id="bookedFieldsContainer" class="space-y-3 sm:space-y-4 border-t border-slate-800 pt-3">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Assigned Lecturer</label>
-                        <select id="slotLecturer" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm"></select>
+                        <select id="slotLecturer" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm"></select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Class Type</label>
-                        <select id="slotClassType" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+                        <select id="slotClassType" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
                             <option value="Trial Class">Trial Class</option>
                             <option value="Face to Face">Face to Face</option>
                             <option value="Online">Online</option>
@@ -215,7 +229,7 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Year Level</label>
-                        <select id="slotYearLevel" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+                        <select id="slotYearLevel" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
                             <option value="Freshman">Freshman</option>
                             <option value="Sophomore">Sophomore</option>
                             <option value="Junior">Junior</option>
@@ -228,13 +242,40 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Course / Subject</label>
-                        <input type="text" id="slotCourse" placeholder="e.g. Advanced Mathematics, Physics 101" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm">
+                        <input type="text" id="slotCourse" placeholder="e.g. Advanced Mathematics, Physics 101" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+                    </div>
+
+                    <!-- Zoom Meeting Link Section -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Zoom Meeting Link / Calendar URL</label>
+                        <div class="flex items-center gap-2">
+                            <input type="url" id="slotZoomLink" placeholder="https://zoom.us/j/..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+                            <a id="testZoomLinkBtn" href="#" target="_blank" class="hidden bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-3 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-video"></i> Join
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Zoom Recording Link Section -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400 mb-1">Zoom Recording Link:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="url" id="slotRecordingLink" placeholder="https://zoom.us/rec/..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+                            <a id="testRecordingLinkBtn" href="#" target="_blank" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-3 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-play"></i> Watch
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeModals()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition">Cancel</button>
-                    <button type="submit" id="saveSlotBtn" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-bold transition shadow-lg shadow-amber-900/30">Save Slot</button>
+                <div class="flex items-center justify-between pt-3 border-t border-slate-800 flex-wrap gap-2">
+                    <div id="visitorViewNotice" class="text-xs text-slate-400 italic">
+                        * Log in as admin to modify this slot.
+                    </div>
+                    <div class="flex items-center gap-2.5 ml-auto w-full sm:w-auto justify-end">
+                        <button type="button" onclick="closeModals()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-medium transition flex-1 sm:flex-initial">Close</button>
+                        <button type="submit" id="saveSlotBtn" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-bold transition shadow-lg shadow-amber-900/30 flex-1 sm:flex-initial">Save Slot</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -242,12 +283,12 @@
 
     <!-- Lecturer Roster Modal -->
     <div id="lecturerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <div class="mb-5">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <div class="mb-4">
+                <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-chalkboard-user text-amber-500"></i> Lecturer Roster
                 </h3>
                 <p class="text-xs text-slate-400 mt-1">Add or remove lecturers available for tutoring assignments.</p>
@@ -255,8 +296,8 @@
 
             <div class="space-y-4">
                 <form onsubmit="handleAddLecturer(event)" class="flex gap-2">
-                    <input type="text" id="newLecturerName" placeholder="Enter lecturer full name..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm" required>
-                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
+                    <input type="text" id="newLecturerName" placeholder="Enter lecturer full name..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm" required>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition shrink-0">
                         <i class="fa-solid fa-plus mr-1"></i> Add
                     </button>
                 </form>
@@ -266,14 +307,14 @@
         </div>
     </div>
 
-    <!-- Admin Settings & Enhanced Timezone Manager Modal -->
+    <!-- Admin Settings & Timezone Manager Modal -->
     <div id="adminSettingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <div class="mb-5">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <div class="mb-4">
+                <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-gear text-amber-500"></i> Admin Settings
                 </h3>
                 <p class="text-xs text-slate-400 mt-1">Change administrator password and configure global platform timezones.</p>
@@ -286,7 +327,7 @@
             </div>
 
             <!-- Password Form -->
-            <form id="passFormSection" onsubmit="handlePasswordChange(event)" class="space-y-4">
+            <form id="passFormSection" onsubmit="handlePasswordChange(event)" class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Current Password</label>
                     <input type="password" id="currentPassInput" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-500 text-sm" required>
@@ -301,11 +342,11 @@
                 </div>
                 <p id="passwordMsg" class="text-xs font-medium"></p>
 
-                <div class="flex items-center justify-between pt-2">
-                    <button type="button" onclick="logoutAdmin()" class="bg-red-600/20 text-red-400 hover:bg-red-600/30 border border-red-500/30 px-4 py-2 rounded-xl text-sm font-medium transition">
+                <div class="flex items-center justify-between pt-2 flex-wrap gap-2">
+                    <button type="button" onclick="logoutAdmin()" class="bg-red-600/20 text-red-400 hover:bg-red-600/30 border border-red-500/30 px-3.5 py-2 rounded-xl text-xs font-medium transition">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout Admin
                     </button>
-                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition">
                         Update Password
                     </button>
                 </div>
@@ -317,31 +358,25 @@
 
                 <form onsubmit="handleAddTimezone(event)" class="space-y-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-amber-400 block uppercase tracking-wider"><i class="fa-solid fa-globe mr-1"></i> Add International Timezone</span>
+                        <span class="text-xs font-bold text-amber-400 block uppercase tracking-wider"><i class="fa-solid fa-globe mr-1"></i> Add Timezone</span>
                         <span class="text-[10px] text-slate-400 font-mono">PST Baseline</span>
                     </div>
 
                     <!-- Preset Picker for Quick Addition -->
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quick Select International Preset:</label>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quick Select Preset:</label>
                         <select id="tzPresetSelect" onchange="applyTzPreset(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-amber-500 cursor-pointer">
                             <option value="">-- Choose a Preset Timezone --</option>
                             <option value="Asia/Tokyo|9|JST (UTC+9) - Tokyo / Seoul">JST (UTC+9) - Tokyo / Seoul</option>
                             <option value="Australia/Sydney|11|AEDT (UTC+11) - Sydney / Melbourne">AEDT (UTC+11) - Sydney / Melbourne</option>
-                            <option value="Australia/Brisbane|10|AEST (UTC+10) - Brisbane">AEST (UTC+10) - Brisbane</option>
                             <option value="Asia/Singapore|8|SGT/PST (UTC+8) - Manila / Singapore">SGT/PST (UTC+8) - Manila / Singapore</option>
                             <option value="Asia/Bangkok|7|ICT (UTC+7) - Bangkok / Jakarta">ICT (UTC+7) - Bangkok / Jakarta</option>
                             <option value="Asia/Kolkata|5.5|IST (UTC+5.5) - New Delhi / India">IST (UTC+5.5) - New Delhi / India</option>
                             <option value="Asia/Dubai|4|GST (UTC+4) - Dubai / UAE">GST (UTC+4) - Dubai / UAE</option>
-                            <option value="Europe/Moscow|3|MSK (UTC+3) - Moscow">MSK (UTC+3) - Moscow</option>
-                            <option value="Europe/Paris|2|CEST (UTC+2) - Paris / Berlin / Rome">CEST (UTC+2) - Paris / Berlin / Rome</option>
+                            <option value="Europe/Paris|2|CEST (UTC+2) - Paris / Rome">CEST (UTC+2) - Paris / Rome</option>
                             <option value="Europe/London|0|GMT/BST (UTC+0) - London / UK">GMT/BST (UTC+0) - London / UK</option>
-                            <option value="America/Sao_Paulo|-3|BRT (UTC-3) - São Paulo / Brazil">BRT (UTC-3) - São Paulo / Brazil</option>
                             <option value="America/New_York|-5|EST (UTC-5) - New York / Toronto">EST (UTC-5) - New York / Toronto</option>
-                            <option value="America/Chicago|-6|CST (UTC-6) - Chicago / Mexico City">CST (UTC-6) - Chicago / Mexico City</option>
-                            <option value="America/Denver|-7|MST (UTC-7) - Denver / Phoenix">MST (UTC-7) - Denver / Phoenix</option>
                             <option value="America/Los_Angeles|-8|PST (UTC-8) - Los Angeles / Vancouver">PST (UTC-8) - Los Angeles / Vancouver</option>
-                            <option value="Pacific/Honolulu|-10|HST (UTC-10) - Honolulu / Hawaii">HST (UTC-10) - Honolulu / Hawaii</option>
                         </select>
                     </div>
 
@@ -359,23 +394,22 @@
                         <label class="block text-[10px] font-medium text-slate-400 mb-1">IANA Region String (Optional)</label>
                         <input type="text" id="tzIanaInput" placeholder="e.g. Asia/Tokyo" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
                     </div>
-                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-plus"></i> Save & Enable Timezone Option
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-plus"></i> Save & Enable Timezone
                     </button>
                 </form>
 
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-300 block uppercase tracking-wider">Active Platform Timezones:</span>
+                        <span class="text-xs font-bold text-slate-300 block uppercase tracking-wider">Active Timezones:</span>
                         <span id="tzCountBadge" class="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">0 active</span>
                     </div>
-                    <div id="adminTzListContainer" class="max-h-48 overflow-y-auto space-y-2 pr-1"></div>
+                    <div id="adminTzListContainer" class="max-h-40 overflow-y-auto space-y-2 pr-1"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Core JavaScript Logic --> 
     <script>
         // --- CLOUD CONFIGURATION ---
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRFXmtKHCPH9P-CEAUQuIAmkWLeoj76mMnnCjLL7ILJNxgO2HT2hmeeoMSYEqkdiIR/exec";
@@ -557,7 +591,7 @@
             updateWeekDisplayLabel();
         }
 
-        // --- LIGHTNING-FAST INSTANT RENDER + BACKGROUND SYNC ---
+        // --- BACKGROUND SYNC ---
         async function loadCloudDataBackground() {
             try {
                 let response = await fetch(WEB_APP_URL, { cache: 'no-store' });
@@ -604,7 +638,7 @@
                     timezones: timezones
                 };
                 let statusEl = document.getElementById('syncStatusIndicator');
-                if (statusEl) statusEl.innerText = "* Syncing changes to cloud...";
+                if (statusEl) statusEl.innerText = "* Syncing to cloud...";
                 
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -619,7 +653,7 @@
             }
         }
 
-        // --- INSTANT DOM INITIALIZATION ---
+        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             loadLocalData();
             populateHeaderTzSelect();
@@ -627,25 +661,23 @@
             renderCalendarHeader();
             renderCalendarBody();
             updateWeekDisplayLabel();
-
-            // Background sync so UI is instantly responsive without blocking
             loadCloudDataBackground();
         });
 
         function renderTabs() {
             let container = document.getElementById('calendarTabsContainer');
             let html = `
-                <button onclick="switchCalendarView('main')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeCalendarView === 'main' ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'}">
-                    <i class="fa-solid fa-calendar-days"></i> Main Calendar
+                <button onclick="switchCalendarView('main')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${activeCalendarView === 'main' ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'}">
+                    <i class="fa-solid fa-calendar-days"></i> Main
                 </button>
             `;
 
             lecturers.forEach(lec => {
                 let isActive = activeCalendarView === lec;
-                let displayName = lec.toLowerCase().includes('engr') ? lec : `Teacher ${lec}`;
+                let shortName = lec.replace(/^Engr\.\s*/i, '');
                 html += `
-                    <button onclick="switchCalendarView('${lec.replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${isActive ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'}">
-                        <i class="fa-solid fa-chalkboard-user"></i> ${displayName}
+                    <button onclick="switchCalendarView('${lec.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${isActive ? 'bg-amber-600 text-white shadow-md' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'}" title="${lec}">
+                        <i class="fa-solid fa-chalkboard-user"></i> ${shortName}
                     </button>
                 `;
             });
@@ -656,8 +688,7 @@
             if (activeCalendarView === 'main') {
                 indicator.innerText = "Viewing: Main Calendar";
             } else {
-                let displayActiveName = activeCalendarView.toLowerCase().includes('engr') ? activeCalendarView : `Teacher ${activeCalendarView}`;
-                indicator.innerText = `Viewing: ${displayActiveName}`;
+                indicator.innerText = `Viewing: ${activeCalendarView}`;
             }
         }
 
@@ -679,7 +710,7 @@
             let end = new Date(activeWeekStartDate);
             end.setDate(end.getDate() + 5);
             
-            let options = { month: 'short', day: 'numeric', year: 'numeric' };
+            let options = { month: 'short', day: 'numeric' };
             let startStr = start.toLocaleDateString('en-US', options);
             let endStr = end.toLocaleDateString('en-US', options);
             
@@ -688,7 +719,7 @@
 
         function renderCalendarHeader() {
             let headerRow = document.getElementById('calendarHeaderRow');
-            let html = `<th class="py-3 px-3 text-xs font-bold uppercase tracking-wider text-slate-400 border-r border-slate-800 w-36 bg-slate-950 sticky left-0 z-20 text-center">TIME</th>`;
+            let html = `<th class="py-2.5 px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-r border-slate-800 w-28 sm:w-36 bg-slate-950 sticky left-0 z-20 text-center">TIME</th>`;
             
             let curr = new Date(activeWeekStartDate);
             let todayStr = formatDateKey(new Date());
@@ -698,11 +729,11 @@
                 let dateStr = `${curr.getMonth() + 1}/${curr.getDate()}`;
                 let isToday = (dateKey === todayStr);
 
-                html += `<th class="py-3 px-3 text-sm font-bold text-slate-200 border-r border-slate-800 w-1/6 ${isToday ? 'today-col-header' : ''}">
-                    <div class="flex justify-between items-center gap-1">
-                        <span class="${isToday ? 'text-amber-400 font-extrabold' : ''}">${day}</span>
-                        <span class="text-[11px] font-mono ${isToday ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 bg-amber-500/10 border-amber-500/30'} px-2 py-0.5 rounded border">
-                            ${isToday ? '• TODAY' : dateStr}
+                html += `<th class="py-2.5 px-2 text-xs sm:text-sm font-bold text-slate-200 border-r border-slate-800 w-1/6 ${isToday ? 'today-col-header' : ''}">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-0.5 sm:gap-1">
+                        <span class="${isToday ? 'text-amber-400 font-extrabold' : ''}">${day.substring(0, 3)}<span class="hidden sm:inline">${day.substring(3)}</span></span>
+                        <span class="text-[9px] sm:text-[11px] font-mono ${isToday ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 bg-amber-500/10 border-amber-500/30'} px-1.5 py-0.5 rounded border">
+                            ${isToday ? 'TODAY' : dateStr}
                         </span>
                     </div>
                 </th>`;
@@ -726,7 +757,7 @@
                 let timeSlotDisplay = convertPSTSlotToOffset(timeSlotPST, currentTzOffset);
 
                 htmlBuffer.push(`<tr class="hover:bg-slate-800/40 transition">`);
-                htmlBuffer.push(`<td class="py-3 px-3 text-xs font-semibold text-slate-400 border-r border-slate-800 bg-slate-950 sticky left-0 z-10 whitespace-nowrap text-center font-mono">${timeSlotDisplay}</td>`);
+                htmlBuffer.push(`<td class="py-2.5 px-2 text-[11px] sm:text-xs font-semibold text-slate-400 border-r border-slate-800 bg-slate-950 sticky left-0 z-10 whitespace-nowrap text-center font-mono">${timeSlotDisplay}</td>`);
 
                 DAYS_OF_WEEK.forEach(day => {
                     let slotKeyPST = `${day}_${timeSlotPST}`;
@@ -740,22 +771,35 @@
                     }
 
                     if (displaySlot.status === 'booked') {
+                        let zoomBtnHtml = displaySlot.zoomLink ? `
+                            <a href="${displaySlot.zoomLink}" target="_blank" onclick="event.stopPropagation()" class="bg-sky-600 hover:bg-sky-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-xs transition shrink-0" title="Join Zoom">
+                                <i class="fa-solid fa-video"></i> Zoom
+                            </a>` : '';
+
+                        let recBtnHtml = displaySlot.recordingLink ? `
+                            <a href="${displaySlot.recordingLink}" target="_blank" onclick="event.stopPropagation()" class="bg-amber-600 hover:bg-amber-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-xs transition shrink-0" title="Zoom Recording">
+                                <i class="fa-solid fa-play"></i> Rec
+                            </a>` : '';
+
                         htmlBuffer.push(`
-                        <td class="p-1.5 border-r border-slate-800 align-top">
-                            <div onclick="openSlotModal('${day}', '${timeSlotPST}')" class="bg-[#FFE5D0] border border-orange-300 text-slate-900 rounded-xl p-2.5 shadow-xs hover:shadow-md hover:scale-[1.01] transition cursor-pointer flex flex-col justify-between gap-1.5 h-full min-h-[92px] overflow-hidden">
-                                <div class="flex items-center justify-between gap-1">
-                                    <span class="bg-orange-500 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide shadow-xs shrink-0">Booked</span>
-                                    <span class="text-[11px] font-bold text-orange-900 truncate">${displaySlot.classType || 'Trial Class'}</span>
+                        <td class="p-1 sm:p-1.5 border-r border-slate-800 align-top">
+                            <div onclick="openSlotModal('${day}', '${timeSlotPST}')" class="bg-[#FFE5D0] border border-orange-300 text-slate-900 rounded-xl p-2 sm:p-2.5 shadow-xs hover:shadow-md transition cursor-pointer flex flex-col justify-between gap-1 h-full min-h-[88px] sm:min-h-[92px] overflow-hidden">
+                                <div class="flex items-center justify-between gap-0.5">
+                                    <span class="bg-orange-500 text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded tracking-wide shrink-0">Booked</span>
+                                    <div class="flex items-center gap-1 flex-wrap justify-end">
+                                        ${zoomBtnHtml}
+                                        ${recBtnHtml}
+                                    </div>
                                 </div>
                                 <div class="space-y-0.5">
-                                    <div class="text-xs font-extrabold text-slate-900 leading-tight line-clamp-2" title="${displaySlot.course || 'Unspecified Course'}">
+                                    <div class="text-[11px] sm:text-xs font-extrabold text-slate-900 leading-tight line-clamp-2" title="${displaySlot.course || 'Unspecified'}">
                                         <i class="fa-solid fa-book-open text-orange-600 mr-1 shrink-0"></i>${displaySlot.course || 'Unspecified Course'}
                                     </div>
-                                    <div class="text-[11px] text-slate-700 font-medium truncate">
+                                    <div class="text-[10px] sm:text-[11px] text-slate-700 font-medium truncate">
                                         <i class="fa-solid fa-graduation-cap text-orange-700 mr-1 shrink-0"></i>${displaySlot.yearLevel || 'Level N/A'}
                                     </div>
                                 </div>
-                                <div class="text-[11px] font-semibold text-orange-950 border-t border-orange-200/80 pt-1 flex items-center gap-1">
+                                <div class="text-[10px] sm:text-[11px] font-semibold text-orange-950 border-t border-orange-200/80 pt-1 flex items-center gap-1">
                                     <i class="fa-solid fa-chalkboard-user text-orange-600 shrink-0"></i>
                                     <span class="truncate">${displaySlot.lecturer || 'Unassigned'}</span>
                                 </div>
@@ -763,17 +807,17 @@
                         </td>`);
                     } else {
                         htmlBuffer.push(`
-                        <td class="p-1.5 border-r border-slate-800 align-top">
-                            <div onclick="openSlotModal('${day}', '${timeSlotPST}')" class="bg-[#E0F2FE] border border-sky-300/80 text-slate-900 rounded-xl p-2.5 shadow-xs hover:shadow-md hover:scale-[1.01] transition cursor-pointer flex flex-col justify-between gap-1.5 h-full min-h-[92px] overflow-hidden">
+                        <td class="p-1 sm:p-1.5 border-r border-slate-800 align-top">
+                            <div onclick="openSlotModal('${day}', '${timeSlotPST}')" class="bg-[#E0F2FE] border border-sky-300/80 text-slate-900 rounded-xl p-2 sm:p-2.5 shadow-xs hover:shadow-md transition cursor-pointer flex flex-col justify-between gap-1 h-full min-h-[88px] sm:min-h-[92px] overflow-hidden">
                                 <div class="flex items-center justify-between gap-1">
-                                    <span class="bg-sky-600 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide shadow-xs shrink-0">Available</span>
+                                    <span class="bg-sky-600 text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded tracking-wide shrink-0">Open</span>
                                     <i class="fa-solid fa-plus text-sky-700 text-xs shrink-0"></i>
                                 </div>
-                                <div class="text-xs text-sky-900 font-medium italic py-1 truncate">
-                                    ${activeCalendarView === 'main' ? 'Open for booking...' : `${activeCalendarView} is free`}
+                                <div class="text-[11px] text-sky-900 font-medium italic py-1 truncate">
+                                    Available slot
                                 </div>
-                                <div class="text-[10px] text-sky-800 font-semibold border-t border-sky-200/80 pt-1">
-                                    Click to assign
+                                <div class="text-[9px] sm:text-[10px] text-sky-800 font-semibold border-t border-sky-200/80 pt-1">
+                                    Tap to view
                                 </div>
                             </div>
                         </td>`);
@@ -816,25 +860,34 @@
 
         function updateAdminUIMode() {
             let authBtn = document.getElementById('authBtn');
+            let authBtnMobile = document.getElementById('authBtnTextMobile');
             let lecturerBtn = document.getElementById('lecturerModalBtn');
             let settingsBtn = document.getElementById('adminSettingsBtn');
 
             if (isAdmin) {
-                authBtn.className = "bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-lg shadow-emerald-900/35";
-                authBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> <span>Admin Mode On</span>';
+                if (authBtn) {
+                    authBtn.className = "bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-lg";
+                    authBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> <span>Admin Mode On</span>';
+                }
+                if (authBtnMobile) {
+                    authBtnMobile.parentNode.className = "bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1 shadow";
+                    authBtnMobile.innerText = "Admin On";
+                }
                 
-                lecturerBtn.classList.remove('hidden');
-                lecturerBtn.classList.add('flex');
-                settingsBtn.classList.remove('hidden');
-                settingsBtn.classList.add('flex');
+                if (lecturerBtn) { lecturerBtn.classList.remove('hidden'); lecturerBtn.classList.add('flex'); }
+                if (settingsBtn) { settingsBtn.classList.remove('hidden'); settingsBtn.classList.add('flex'); }
             } else {
-                authBtn.className = "bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-lg shadow-amber-900/30";
-                authBtn.innerHTML = '<i class="fa-solid fa-lock"></i> <span id="authBtnText">Admin Login</span>';
+                if (authBtn) {
+                    authBtn.className = "bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-lg";
+                    authBtn.innerHTML = '<i class="fa-solid fa-lock"></i> <span id="authBtnText">Admin Login</span>';
+                }
+                if (authBtnMobile) {
+                    authBtnMobile.parentNode.className = "bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1 shadow";
+                    authBtnMobile.innerText = "Admin";
+                }
 
-                lecturerBtn.classList.add('hidden');
-                lecturerBtn.classList.remove('flex');
-                settingsBtn.classList.add('hidden');
-                settingsBtn.classList.remove('flex');
+                if (lecturerBtn) { lecturerBtn.classList.add('hidden'); lecturerBtn.classList.remove('flex'); }
+                if (settingsBtn) { settingsBtn.classList.add('hidden'); settingsBtn.classList.remove('flex'); }
             }
         }
 
@@ -848,14 +901,6 @@
 
         // --- SLOT EDITING & DETAILS ---
         function openSlotModal(day, timeSlotPST) {
-            if (!isAdmin) {
-                let confirmLogin = confirm("Administrator permission is required to edit schedule slots. Would you like to log in now?");
-                if (confirmLogin) {
-                    document.getElementById('loginModal').classList.remove('hidden');
-                }
-                return;
-            }
-
             document.getElementById('slotDay').value = day;
             document.getElementById('slotTime').value = timeSlotPST;
             
@@ -881,6 +926,30 @@
                 document.getElementById('slotClassType').value = slotInfo.classType || 'Trial Class';
                 document.getElementById('slotYearLevel').value = slotInfo.yearLevel || 'Freshman';
                 document.getElementById('slotCourse').value = slotInfo.course || '';
+                
+                let zoomInput = document.getElementById('slotZoomLink');
+                zoomInput.value = slotInfo.zoomLink || '';
+                let testZoomBtn = document.getElementById('testZoomLinkBtn');
+                if (slotInfo.zoomLink) {
+                    testZoomBtn.href = slotInfo.zoomLink;
+                    testZoomBtn.classList.remove('hidden');
+                    testZoomBtn.classList.add('flex');
+                } else {
+                    testZoomBtn.classList.add('hidden');
+                    testZoomBtn.classList.remove('flex');
+                }
+
+                let recInput = document.getElementById('slotRecordingLink');
+                recInput.value = slotInfo.recordingLink || '';
+                let testRecBtn = document.getElementById('testRecordingLinkBtn');
+                if (slotInfo.recordingLink) {
+                    testRecBtn.href = slotInfo.recordingLink;
+                    testRecBtn.classList.remove('hidden');
+                    testRecBtn.classList.add('flex');
+                } else {
+                    testRecBtn.classList.add('hidden');
+                    testRecBtn.classList.remove('flex');
+                }
             } else {
                 if (activeCalendarView !== 'main') {
                     document.getElementById('slotLecturer').value = activeCalendarView;
@@ -888,6 +957,38 @@
                 document.getElementById('slotClassType').value = 'Trial Class';
                 document.getElementById('slotYearLevel').value = 'Freshman';
                 document.getElementById('slotCourse').value = '';
+                document.getElementById('slotZoomLink').value = '';
+                document.getElementById('testZoomLinkBtn').classList.add('hidden');
+                document.getElementById('slotRecordingLink').value = '';
+                document.getElementById('testRecordingLinkBtn').classList.add('hidden');
+            }
+
+            let saveBtn = document.getElementById('saveSlotBtn');
+            let visitorNotice = document.getElementById('visitorViewNotice');
+            let headingText = document.getElementById('slotModalHeadingText');
+
+            if (isAdmin) {
+                document.getElementById('slotStatus').disabled = false;
+                document.getElementById('slotLecturer').disabled = false;
+                document.getElementById('slotClassType').disabled = false;
+                document.getElementById('slotYearLevel').disabled = false;
+                document.getElementById('slotCourse').disabled = false;
+                document.getElementById('slotZoomLink').disabled = false;
+                document.getElementById('slotRecordingLink').disabled = false;
+                saveBtn.style.display = 'inline-block';
+                visitorNotice.style.display = 'none';
+                headingText.innerText = "Edit Time Slot";
+            } else {
+                document.getElementById('slotStatus').disabled = true;
+                document.getElementById('slotLecturer').disabled = true;
+                document.getElementById('slotClassType').disabled = true;
+                document.getElementById('slotYearLevel').disabled = true;
+                document.getElementById('slotCourse').disabled = true;
+                document.getElementById('slotZoomLink').disabled = true;
+                document.getElementById('slotRecordingLink').disabled = true;
+                saveBtn.style.display = 'none';
+                visitorNotice.style.display = 'block';
+                headingText.innerText = "Time Slot Details";
             }
 
             toggleSlotFields();
@@ -901,13 +1002,15 @@
                 container.style.display = 'block';
                 document.getElementById('slotCourse').required = true;
             } else {
-                container.style.display = 'none';
+                container.style.display = 'block';
                 document.getElementById('slotCourse').required = false;
             }
         }
 
         function handleSlotFormSubmit(event) {
             event.preventDefault();
+            if (!isAdmin) return;
+
             let day = document.getElementById('slotDay').value;
             let timeSlotPST = document.getElementById('slotTime').value;
             let status = document.getElementById('slotStatus').value;
@@ -925,7 +1028,9 @@
                     lecturer: assignedLecturer,
                     classType: document.getElementById('slotClassType').value,
                     yearLevel: document.getElementById('slotYearLevel').value,
-                    course: document.getElementById('slotCourse').value
+                    course: document.getElementById('slotCourse').value,
+                    zoomLink: document.getElementById('slotZoomLink').value.trim(),
+                    recordingLink: document.getElementById('slotRecordingLink').value.trim()
                 };
             } else {
                 schedulesData[weekKey][slotKeyPST] = { status: 'available' };
@@ -936,7 +1041,7 @@
             saveToCloud();
         }
 
-        // --- LECTURER ROSTER MANAGEMENT ---
+        // --- LECTURER ROSTER ---
         function openLecturerModal() {
             renderLecturerList();
             document.getElementById('lecturerModal').classList.remove('hidden');
@@ -945,7 +1050,7 @@
         function renderLecturerList() {
             let container = document.getElementById('lecturerListContainer');
             if (lecturers.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-2">No lecturers registered in roster.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-2">No lecturers registered.</p>`;
                 return;
             }
 
@@ -954,8 +1059,8 @@
                 let displayName = lec.toLowerCase().includes('engr') ? lec : `Teacher ${lec}`;
                 html += `
                 <div class="flex items-center justify-between bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-xs">
-                    <span class="text-white font-semibold"><i class="fa-solid fa-chalkboard-user text-amber-500 mr-2"></i> ${displayName}</span>
-                    <button type="button" onclick="deleteLecturer(${idx})" class="text-red-400 hover:text-red-300 p-1 transition" title="Delete Lecturer">
+                    <span class="text-white font-semibold truncate mr-2"><i class="fa-solid fa-chalkboard-user text-amber-500 mr-2"></i> ${displayName}</span>
+                    <button type="button" onclick="deleteLecturer(${idx})" class="text-red-400 hover:text-red-300 p-1.5 transition shrink-0" title="Delete">
                         <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
                 </div>`;
@@ -978,10 +1083,10 @@
 
         function deleteLecturer(index) {
             if (lecturers.length <= 1) {
-                alert("You must maintain at least one lecturer in the roster.");
+                alert("You must maintain at least one lecturer.");
                 return;
             }
-            if (confirm(`Are you sure you want to remove ${lecturers[index]} from the roster?`)) {
+            if (confirm(`Remove ${lecturers[index]} from roster?`)) {
                 let removed = lecturers[index];
                 lecturers.splice(index, 1);
                 if (activeCalendarView === removed) {
@@ -994,7 +1099,7 @@
             }
         }
 
-        // --- ADMIN SETTINGS & TIMEZONE MANAGER ---
+        // --- ADMIN SETTINGS & TIMEZONE ---
         function openAdminSettingsModal() {
             document.getElementById('currentPassInput').value = '';
             document.getElementById('newPassInput').value = '';
@@ -1043,9 +1148,7 @@
             alertEl.className = `text-xs font-semibold p-2.5 rounded-xl border ${isError ? 'bg-red-500/20 text-red-300 border-red-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'}`;
             alertEl.innerText = message;
             alertEl.classList.remove('hidden');
-            setTimeout(() => {
-                alertEl.classList.add('hidden');
-            }, 3000);
+            setTimeout(() => { alertEl.classList.add('hidden'); }, 3000);
         }
 
         function renderAdminTimezoneList() {
@@ -1060,13 +1163,13 @@
 
             container.innerHTML = timezones.map((tz, idx) => `
                 <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs">
-                    <div>
-                        <span class="text-white font-semibold block">${tz.label}</span>
-                        <span class="text-[10px] text-slate-400 font-mono">Offset: UTC${tz.offset >= 0 ? '+' : ''}${tz.offset} | ${tz.iana || 'UTC'}</span>
+                    <div class="truncate mr-2">
+                        <span class="text-white font-semibold block truncate">${tz.label}</span>
+                        <span class="text-[10px] text-slate-400 font-mono">UTC${tz.offset >= 0 ? '+' : ''}${tz.offset}</span>
                     </div>
                     ${timezones.length > 1 ? `
-                    <button type="button" onclick="deleteTimezoneOption(${idx})" class="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1.5 rounded-lg border border-red-500/20 transition flex items-center gap-1" title="Delete Timezone">
-                        <i class="fa-solid fa-trash-can text-xs"></i> <span class="text-[10px] font-bold">Remove</span>
+                    <button type="button" onclick="deleteTimezoneOption(${idx})" class="text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1.5 rounded-lg border border-red-500/20 transition shrink-0" title="Remove">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>` : `<span class="text-[10px] text-slate-600 italic">Default</span>`}
                 </div>
             `).join('');
@@ -1091,10 +1194,10 @@
             let existingIndex = timezones.findIndex(tz => tz.label.toLowerCase() === label.toLowerCase());
             if (existingIndex !== -1) {
                 timezones[existingIndex] = { label, offset, iana: iana || 'UTC' };
-                showTzAlert(`Updated timezone "${label}".`);
+                showTzAlert(`Updated "${label}".`);
             } else {
                 timezones.push({ label, offset, iana: iana || 'UTC' });
-                showTzAlert(`Successfully added "${label}".`);
+                showTzAlert(`Added "${label}".`);
             }
 
             currentTzOffset = offset;
@@ -1112,11 +1215,11 @@
 
         function deleteTimezoneOption(index) {
             if (timezones.length <= 1) {
-                showTzAlert("At least one timezone option must remain active.", true);
+                showTzAlert("At least one timezone must remain active.", true);
                 return;
             }
             let targetTzObj = timezones[index];
-            if (confirm(`Are you sure you want to delete the timezone "${targetTzObj.label}"?`)) {
+            if (confirm(`Remove timezone "${targetTzObj.label}"?`)) {
                 let deletedOffset = targetTzObj.offset;
                 timezones.splice(index, 1);
                 
@@ -1129,7 +1232,7 @@
                 populateHeaderTzSelect();
                 renderAdminTimezoneList();
                 renderCalendarBody();
-                showTzAlert(`Timezone "${targetTzObj.label}" removed.`);
+                showTzAlert(`Removed "${targetTzObj.label}".`);
             }
         }
 
@@ -1163,9 +1266,7 @@
             msgEl.className = 'text-emerald-400 text-xs font-medium';
             msgEl.innerText = 'Password successfully updated!';
 
-            setTimeout(() => {
-                closeModals();
-            }, 1200);
+            setTimeout(() => { closeModals(); }, 1200);
         }
     </script>
 </body>
