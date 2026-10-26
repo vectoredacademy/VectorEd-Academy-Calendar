@@ -50,7 +50,7 @@
                     <h1 class="text-base sm:text-xl font-black tracking-wider text-white flex items-center gap-1.5">
                         Vector<span class="text-amber-500">Ed</span> <span class="text-slate-300 font-normal text-xs sm:text-base">Academy</span>
                     </h1>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 tracking-wide font-medium">Interactive Tutoring & Class Schedule</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-400 tracking-wide font-medium">Interactive Tutoring &amp; Class Schedule</p>
                 </div>
             </div>
 
@@ -395,7 +395,7 @@
                         <input type="text" id="tzIanaInput" placeholder="e.g. Asia/Tokyo" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500">
                     </div>
                     <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-plus"></i> Save & Enable Timezone
+                        <i class="fa-solid fa-plus"></i> Save &amp; Enable Timezone
                     </button>
                 </form>
 
@@ -414,13 +414,13 @@
         // --- CLOUD CONFIGURATION ---
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRFXmtKHCPH9P-CEAUQuIAmkWLeoj76mMnnCjLL7ILJNxgO2HT2hmeeoMSYEqkdiIR/exec";
 
-        // --- CONSTANTS & TIME SLOTS ---
+        // --- CONSTANTS & TIME SLOTS (Extended operating window up to 12:00 AM Midnight) ---
         const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const TIME_SLOTS = [];
         let startHour = 8;
         let startMinute = 0;
-        let endHour = 20;
+        let endHour = 24; // 24 = 12:00 AM Midnight MAX
         let endMinute = 0;
 
         let currentH = startHour;
@@ -435,8 +435,9 @@
             }
 
             let formatTime = (h, m) => {
-                let period = h >= 12 ? 'PM' : 'AM';
-                let rawH = h % 12 === 0 ? 12 : h % 12;
+                let normH = h % 24;
+                let period = (h >= 12 && h < 24) ? 'PM' : 'AM';
+                let rawH = normH % 12 === 0 ? 12 : normH % 12;
                 let displayH = rawH < 10 ? '0' + rawH : rawH;
                 let displayM = m < 10 ? '0' + m : m;
                 return `${displayH}:${displayM} ${period}`;
@@ -743,6 +744,17 @@
             headerRow.innerHTML = html;
         }
 
+        /**
+         * TAB HIERARCHY FILTERING ENGINE:
+         * 
+         * 1. Main Calendar View:
+         *    - Renders slots created on the Main Calendar (sourceTab === 'main' or undefined).
+         *    - If a slot created on Main is assigned to a specific lecturer, it displays on Main AND on that lecturer's tab.
+         * 
+         * 2. Lecturer Specific View (e.g. Zyrille Pagulong):
+         *    - Renders slots assigned to that lecturer (whether created on Main OR created directly on the lecturer tab).
+         *    - Slots created directly inside a Lecturer tab (sourceTab === 'Lecturer Name') DO NOT show on the Main Calendar tab.
+         */
         function renderCalendarBody() {
             let body = document.getElementById('calendarBody');
             let weekKey = getWeekIdentifier();
@@ -764,9 +776,20 @@
                     let slotInfo = weekSlots[slotKeyPST] || { status: 'available' };
 
                     let displaySlot = slotInfo;
-                    if (activeCalendarView !== 'main') {
-                        if (slotInfo.status === 'booked' && slotInfo.lecturer !== activeCalendarView) {
-                            displaySlot = { status: 'available' };
+
+                    if (slotInfo.status === 'booked') {
+                        let sourceTab = slotInfo.sourceTab || 'main';
+
+                        if (activeCalendarView === 'main') {
+                            // Main Calendar View Rule: Show only if created on Main (sourceTab === 'main')
+                            if (sourceTab !== 'main') {
+                                displaySlot = { status: 'available' };
+                            }
+                        } else {
+                            // Lecturer Tab View Rule: Show if assigned to this lecturer
+                            if (slotInfo.lecturer !== activeCalendarView) {
+                                displaySlot = { status: 'available' };
+                            }
                         }
                     }
 
@@ -1020,12 +1043,21 @@
                 schedulesData[weekKey] = {};
             }
             let slotKeyPST = `${day}_${timeSlotPST}`;
+            let existingSlot = schedulesData[weekKey][slotKeyPST] || {};
 
             if (status === 'booked') {
                 let assignedLecturer = document.getElementById('slotLecturer').value;
+                
+                // Determine sourceTab for Tab Hierarchy
+                let sourceTab = existingSlot.sourceTab;
+                if (!sourceTab) {
+                    sourceTab = (activeCalendarView !== 'main') ? activeCalendarView : 'main';
+                }
+
                 schedulesData[weekKey][slotKeyPST] = {
                     status: 'booked',
                     lecturer: assignedLecturer,
+                    sourceTab: sourceTab, // Hierarchical source tab routing
                     classType: document.getElementById('slotClassType').value,
                     yearLevel: document.getElementById('slotYearLevel').value,
                     course: document.getElementById('slotCourse').value,
